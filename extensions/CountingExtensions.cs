@@ -17,6 +17,25 @@ namespace CSharpSnippets.Extensions.CountingExtensions
             dict[key]++;
         }
 
+        public static int PrePlusPlusAt<T>(this IDictionary<T, int> dict, T key)
+        {
+            if (!dict.ContainsKey(key))
+            {
+                dict[key] = 0;
+            }
+            return dict[key]++;
+        }
+
+        public static int PostPlusPlusAt<T>(this IDictionary<T, int> dict, T key)
+        {
+            if (!dict.ContainsKey(key))
+            {
+                dict[key] = 0;
+            }
+            return ++dict[key];
+        }
+
+
         public static int CountsPerWeightTotalCount(this IDictionary<int, int> dict)
         {
             int total = 0;
