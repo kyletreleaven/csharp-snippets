@@ -8,25 +8,27 @@ namespace CSharpSnippets.Extensions.CollectionExtensions
 {
     public static class CollectionExt
     {
-        public static bool AddToSet<TKey, TValue, TSet>(this IDictionary<TKey, TSet> dict, TKey key, TValue value)
-            where TSet : ISet<TValue>, new()
+        public static bool AddToSet<TKey, TValue, TSetRef, TSetConstr>(this IDictionary<TKey, TSetRef> dict, TKey key, TValue value)
+            where TSetRef : ISet<TValue>
+            where TSetConstr : TSetRef, new()
         {
-            TSet theSet;
+            TSetRef theSet;
             if (!dict.TryGetValue(key, out theSet))
             {
-                theSet = dict[key] = new TSet();
+                theSet = dict[key] = new TSetConstr();
             }
 
             return theSet.Add(value);
         }
 
-        public static void AddToCollection<TKey, TValue, TCollection>(this IDictionary<TKey, TCollection> dict, TKey key, TValue value)
-            where TCollection : ICollection<TValue>, new()
+        public static void AddToCollection<TKey, TValue, TCollRef, TCollConstr>(this IDictionary<TKey, TCollRef> dict, TKey key, TValue value)
+            where TCollRef : ICollection<TValue>
+            where TCollConstr : TCollRef, new()
         {
-            TCollection theColl;
+            TCollRef theColl;
             if (!dict.TryGetValue(key, out theColl))
             {
-                theColl = dict[key] = new TCollection();
+                theColl = dict[key] = new TCollConstr();
             }
 
             theColl.Add(value);
