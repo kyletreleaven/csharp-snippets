@@ -6,7 +6,10 @@ namespace Demo
 	{
 		public static void Main (string[] args)
 		{
-			Console.WriteLine ("Hello World!");
+			//DefaultDictDemo.Run ();
+			TakeNDemo.Run ();
+
+			Console.ReadLine ();
 		}
 	}
 }

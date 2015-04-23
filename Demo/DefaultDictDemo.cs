@@ -1,9 +1,11 @@
 namespace Demo
 {
 	using System;
+	using System.Collections.Generic;
+	using System.Diagnostics;
 	using CSharpSnippets.Decorators.Dictionary;
 	using CSharpSnippets.Extensions.Collections;
-	using CSharpSnippets.Extensions.Random;
+	using CSharpSnippets.Extensions.RandomExt;
 
 	public static class EnumerableExt
 	{
@@ -15,7 +17,7 @@ namespace Demo
 
 	public static class DefaultDictDemo
 	{
-		public void Run()
+		public static void Run()
 		{
 			var sw = new Stopwatch();
 
@@ -81,9 +83,6 @@ namespace Demo
 			foreach (var kvp in haveLenDict) {
 				Console.WriteLine ("{0} => {1}", kvp.Key, kvp.Value.GetString() );
 			}
-
-			//Console.WriteLine ("Hello World!");
-			Console.ReadLine();
 		}
 	}
 }
