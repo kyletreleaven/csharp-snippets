@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharpSnippets.Extensions.CollectionExtensions
+namespace CSharpSnippets.Extensions.Collections
 {
     public static class CollectionExt
     {

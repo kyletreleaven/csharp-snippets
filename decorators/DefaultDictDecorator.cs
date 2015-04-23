@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace defaultdict
+namespace CSharpSnippets.Decorators.Dictionary
 {
 	public class DefaultDictDecorator<K,T> : IDictionary<K,T>
 	{
