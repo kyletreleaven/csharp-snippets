@@ -8,7 +8,7 @@ namespace CSharpSnippets.Extensions.Collections
 {
     public static class CollectionExt
     {
-        public static bool AddToSet<TKey, TValue, TSetRef, TSetConstr>(this IDictionary<TKey, TSetRef> dict, TKey key, TValue value)
+        public static TSetRef GetSetAt<TKey, TValue, TSetRef, TSetConstr>(this IDictionary<TKey, TSetRef> dict, TKey key)
             where TSetRef : ISet<TValue>
             where TSetConstr : TSetRef, new()
         {
@@ -17,8 +17,14 @@ namespace CSharpSnippets.Extensions.Collections
             {
                 theSet = dict[key] = new TSetConstr();
             }
+            return theSet;
+        }
 
-            return theSet.Add(value);
+        public static bool AddToSet<TKey, TValue, TSetRef, TSetConstr>(this IDictionary<TKey, TSetRef> dict, TKey key, TValue value)
+            where TSetRef : ISet<TValue>
+            where TSetConstr : TSetRef, new()
+        {
+            return dict.GetSetAt<TKey,TValue,TSetRef,TSetConstr>(key).Add(value);
         }
 
         public static void AddToCollection<TKey, TValue, TCollRef, TCollConstr>(this IDictionary<TKey, TCollRef> dict, TKey key, TValue value)

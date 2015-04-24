@@ -17,6 +17,14 @@ namespace CSharpSnippets.Extensions.Counting
 			return 0;
 		}
 
+        public static void EnsureCount<T>(this IDictionary<T, int> dict, T key)
+        {
+            if (!dict.ContainsKey(key))
+            {
+                dict[key] = 0;
+            }
+        }
+
         public static void IncrementAt<T>(this IDictionary<T, int> dict, T key)
         {
 			dict [key] = dict.CountAt (key) + 1;
@@ -24,15 +32,14 @@ namespace CSharpSnippets.Extensions.Counting
 
         public static int PrePlusPlusAt<T>(this IDictionary<T, int> dict, T key)
         {
-			int count = dict.CountAt (key);
-			dict.IncrementAt (key);
-			return count;
+            dict.EnsureCount(key);
+            return ++dict[key];
         }
 
         public static int PostPlusPlusAt<T>(this IDictionary<T, int> dict, T key)
         {
-			dict.IncrementAt (key);
-			return dict [key];
+            dict.EnsureCount(key);
+            return dict[key]++;
         }
 
         public static int CountsPerWeightTotalCount(this IDictionary<int, int> dict)

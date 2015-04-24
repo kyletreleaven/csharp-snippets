@@ -1,29 +1,90 @@
 namespace Demo
 {
+    using System.Linq;
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using CSharpSnippets.Decorators.Dictionary;
 	using CSharpSnippets.Extensions.Collections;
+    using CSharpSnippets.Extensions.Counting;
 	using CSharpSnippets.Extensions.RandomExt;
 	
 	public static class TakeNDemo
 	{
-		public static void ByCategoryTakeFirstN<TObj,TCategory>( this IDictionary<TObj,TCategory> dict, int n,
-		                                                        out IDictionary<TCategory,ISet<TObj>> choices, out IDictionary<TCategory,int> counts )
+        public static void ByCategoryTakeFirstN_Raw<TObj, TCategory>(this IDictionary<TObj, TCategory> dict, int n,
+            out IDictionary<TCategory, int> counts,
+            out IDictionary<TCategory, ISet<TObj>> choices)
+        {
+            counts = new Dictionary<TCategory, int>();
+            choices = new Dictionary<TCategory, ISet<TObj>>();
+
+            foreach (var kvp in dict)
+            {
+                TObj item = kvp.Key;
+                TCategory key = kvp.Value;
+
+                if (!counts.ContainsKey(key))
+                {
+                    counts.Add(key, 1);
+                }
+                else
+                {
+                    counts[key]++;
+                }
+
+                if (counts[key] > n)
+                {
+                    continue;
+                }
+
+                if (!choices.ContainsKey(key))
+                {
+                    choices.Add(key, new HashSet<TObj> { item });
+                }
+                else
+                {
+                    choices[key].Add(item);
+                }
+            }
+        }
+
+		public static void ByCategoryTakeFirstN_Decorated<TObj,TCategory>( this IDictionary<TObj,TCategory> dict, int n,
+            out IDictionary<TCategory,int> counts, out IDictionary<TCategory,ISet<TObj>> choices )
 		{
 			counts = new DefaultDictDecorator<TCategory,int> (new Dictionary<TCategory,int> (), () => 0);
 			choices = new DefaultDictDecorator<TCategory,ISet<TObj>> (new Dictionary<TCategory,ISet<TObj>> (), () => new HashSet<TObj> ());
 
 			foreach (var kvp in dict) {
-				if (counts [kvp.Value]++ < n) {
-					Console.WriteLine ("adding {0}th obj to cat {1}; new count {2}", kvp.Key, kvp.Value, counts [kvp.Value]);
-					choices [kvp.Value].Add (kvp.Key);
-				} else {
-					Console.WriteLine ("{0}th obj discarded; count {1} for cat {2} is sufficient", kvp.Key, counts [kvp.Value], kvp.Value);
+                TObj item = kvp.Key;
+                TCategory key = kvp.Value;
+
+				if (counts [key]++ < n)
+                {
+					choices [key].Add (item);
 				}
 			}
 		}
+
+        public static void ByCategoryTakeFirstN_Extended<TObj, TCategory>(this IDictionary<TObj, TCategory> dict, int n,
+            out IDictionary<TCategory, int> counts, out IDictionary<TCategory, ISet<TObj>> choices)
+        {
+            counts = new Dictionary<TCategory, int>();
+            choices = new Dictionary<TCategory, ISet<TObj>>();
+
+            foreach (var kvp in dict)
+            {
+                TObj item = kvp.Key;
+                TCategory key = kvp.Value;
+
+                if (counts.PostPlusPlusAt(key) < n )
+                {
+                    choices.GetSetAt<TCategory,TObj,ISet<TObj>,HashSet<TObj>>(key).Add(item);
+                }
+            }
+        }
+
+
+
 
 		public static void Run()
 		{
@@ -36,7 +97,7 @@ namespace Demo
 
 			IDictionary<int,int> counts;
 			IDictionary<int,ISet<string>> choices;
-			botToZoneMap.ByCategoryTakeFirstN (10, out choices, out counts );
+            botToZoneMap.ByCategoryTakeFirstN_Extended(10, out counts, out choices);
 
 			Console.WriteLine ("zones to counts:");
 			foreach (var kvp in counts) {
@@ -45,7 +106,11 @@ namespace Demo
 
 			Console.WriteLine ("zones to choices:");
 			foreach (var kvp in choices) {
-				Console.WriteLine ("{0} => {1}", kvp.Key, kvp.Value.GetString() );
+				Console.WriteLine ("{0} => {1}", kvp.Key,
+                    kvp.Value
+                        .Select( bot => string.Format("{0}@zone{1}", bot, botToZoneMap[bot]) )
+                        .GetString()
+                );
 			}
 		}
 	}
